@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace AutoTyper
 {
@@ -16,45 +17,43 @@ namespace AutoTyper
     /// MainForm
     /// </summary>
     public partial class MainForm : Form
-    {        
+    {
         #region Declarations
         private AutoTyper _typer;
+        private string[] _autoTypedText;
         #endregion
+
         public MainForm()
         {
             InitializeComponent();
+
+            InitializeAutoTyper();
+
+            cboKey.SelectedIndex = 0;
         }
 
+        static readonly List<string> FUNCTION_KEYS = new List<string> { "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12" };
 
-        private void chkEnabled_CheckedChanged(object sender, EventArgs e)
+        private void InitializeAutoTyper()
         {
-            if (chkEnabled.Checked)
+            XDocument doc = XDocument.Load("autotyper.xml");
+            _autoTypedText = new string[FUNCTION_KEYS.Count];
+            foreach (var elt in doc.Root.Elements("Key"))
             {
-                _typer = new AutoTyper();
-                _typer.StartTyping(txtTextToType.Text);                
+                string key = elt.Attribute("value").Value;
+                int numKey = FUNCTION_KEYS.IndexOf(key);
+                if (numKey >= 0 && numKey <= 11)
+                {
+                    _autoTypedText[numKey] = (elt.FirstNode as XCData).Value.Replace("\n", "\r\n");
+                }                
             }
-            else
-            {
-                _typer.StopTyping();                
-            }
+            _typer = new AutoTyper(_autoTypedText);
+            _typer.StartAutoTyping();
         }
 
-        /// <summary>
-        /// get the scan code relative to the char 'c'
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        private static byte GetScanCode(char c)
+        private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int keyCode = (int)c;
-
-            // Letters
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-            {
-                return (byte)keyCode;
-            }
-
-            return (byte)keyCode;
+            txtTextToType.Text = _autoTypedText[cboKey.SelectedIndex];
         }
     }
 }

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Autotyper>
+  <Key value="F1">
+    <![CDATA[for (int i = 0; i &lt; 10; i++)
+    {
+        Console.WriteLine("i = " + i);
+    }]]>
+  </Key>
+  <Key value="F2">
+    <![CDATA[for (int i = 0; i &lt; 100; i++)
+    {
+      Console.WriteLine("isdfsdfsd = " + i);
+    }]]>
+  </Key>
+</Autotyper>

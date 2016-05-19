@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoTyper
@@ -17,20 +21,14 @@ namespace AutoTyper
         private const int WM_KEYUP = 0x0101;
         private LowLevelKeyboardProc _proc;
         private IntPtr _hookId = IntPtr.Zero;
-        private string _text;
         #endregion
 
         #region Public constructor and methods
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="autoTypedText">List of autotyped text</param>
-        public AutoTyper(string[] autoTypedText)
+        public AutoTyper()
         {
-            for (int i = 0; i < Math.Min(autoTypedText.Length, this.AutoTypedText.Length); i++)
-            {
-                this.AutoTypedText[i] = autoTypedText[i];
-            }
             _proc = new LowLevelKeyboardProc(HookCallback);
         }
 
@@ -38,8 +36,9 @@ namespace AutoTyper
         /// Start auto-typing text
         /// </summary>
         /// <param name="text">The text that will replace typing</param>
-        public void StartAutoTyping()
-        {            
+        public void StartTyping(string text)
+        {
+            this.Text = text;
             this._replIndex = 0;
             this._intercept = true;
             _hookId = SetHook(_proc);
@@ -48,12 +47,18 @@ namespace AutoTyper
         /// <summary>
         /// Stop auto-typing
         /// </summary>
-        public void StopAutoTyping()
+        public void StopTyping()
         {
             UnhookWindowsHookEx(_hookId);
             this._replIndex = 0;
             this._intercept = true;
-        }        
+        }
+
+        /// <summary>
+        /// The replacement text
+        /// </summary>
+        public string Text { get; private set; }
+
         #endregion
 
         #region Private methods
@@ -86,7 +91,7 @@ namespace AutoTyper
         /// <returns></returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (_replIndex < _text.Length && _intercept)
+            if (_replIndex < this.Text.Length && _intercept)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
 
@@ -95,7 +100,7 @@ namespace AutoTyper
                     switch ((Keys)vkCode)
                     {
                         case Keys.Escape:
-                            this.StopAutoTyping();
+                            this.StopTyping();
                             break;
 
                         case Keys.F1:
@@ -105,7 +110,7 @@ namespace AutoTyper
                         default:
                             _intercept = false;
                             string keys = string.Empty;
-                            switch (_text[_replIndex])
+                            switch (this.Text[_replIndex])
                             {
                                 case '{':
                                 case '}':
@@ -114,11 +119,11 @@ namespace AutoTyper
                                 case '%':
                                 case '+':
                                 case '^':
-                                    keys = string.Format("{{{0}}}", _text[_replIndex]);
+                                    keys = string.Format("{{{0}}}", this.Text[_replIndex]);
                                     break;
 
                                 default:
-                                    keys = _text[_replIndex].ToString();
+                                    keys = this.Text[_replIndex].ToString();
                                     break;
                             }
                             Console.WriteLine(keys);
@@ -148,13 +153,6 @@ namespace AutoTyper
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetModuleHandle(string l);
-        #endregion
-
-        #region Properties
-        /// <summary>
-        /// List the text to be typed for each function key (F1 => AutoTypedText[0] ...)
-        /// </summary>
-        public string[] AutoTypedText { get; private set; } = new string[12];
         #endregion
     }
 }
