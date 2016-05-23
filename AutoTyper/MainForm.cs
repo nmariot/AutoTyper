@@ -45,15 +45,14 @@ namespace AutoTyper
                 if (numKey >= 0 && numKey <= 11)
                 {
                     _autoTypedText[numKey] = (elt.FirstNode as XCData).Value.Replace("\n", "\r\n");
-                }                
+                }
             }
-            _typer = new AutoTyper(_autoTypedText);
-            _typer.StartAutoTyping();
+            _typer = new AutoTyper(_autoTypedText);           
         }
 
         private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtTextToType.Text = _autoTypedText[cboKey.SelectedIndex];
-        }
+        }        
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define VERBOSE_DEBUG 
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -17,7 +18,6 @@ namespace AutoTyper
         private const int WM_KEYUP = 0x0101;
         private LowLevelKeyboardProc _proc;
         private IntPtr _hookId = IntPtr.Zero;
-        private string _text;
         #endregion
 
         #region Public constructor and methods
@@ -32,28 +32,8 @@ namespace AutoTyper
                 this.AutoTypedText[i] = autoTypedText[i];
             }
             _proc = new LowLevelKeyboardProc(HookCallback);
-        }
-
-        /// <summary>
-        /// Start auto-typing text
-        /// </summary>
-        /// <param name="text">The text that will replace typing</param>
-        public void StartAutoTyping()
-        {            
-            this._replIndex = 0;
-            this._intercept = true;
             _hookId = SetHook(_proc);
         }
-
-        /// <summary>
-        /// Stop auto-typing
-        /// </summary>
-        public void StopAutoTyping()
-        {
-            UnhookWindowsHookEx(_hookId);
-            this._replIndex = 0;
-            this._intercept = true;
-        }        
         #endregion
 
         #region Private methods
@@ -67,15 +47,32 @@ namespace AutoTyper
         }
 
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-        /// <summary>
-        /// Intercepting and replacing typing ?
-        /// </summary>
-        private bool _intercept;
 
         /// <summary>
         /// Index in the replacement text
         /// </summary>
         private int _replIndex;
+
+        /// <summary>
+        /// Text index in the array AutoTypedText
+        /// </summary>
+        private int _textIndex;
+
+        /// <summary>
+        /// Special keys
+        /// </summary>
+        private bool _ctrlPressed = false;
+        private bool _shiftPressed = false;
+
+        /// <summary>
+        /// Bool value used to temporarily desactivate interception (for one keystroke to avoid endless loop)
+        /// </summary>
+        private bool _tmpIntercept = true;
+
+        /// <summary>
+        /// replacing text ?
+        /// </summary>
+        private bool _replaceText = false;
 
         /// <summary>
         /// The callback called when a key has been typed
@@ -86,52 +83,120 @@ namespace AutoTyper
         /// <returns></returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (_replIndex < _text.Length && _intercept)
+            if (_tmpIntercept && nCode >= 0)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
+                //Debug($"wParam = {wParam}, lParam = {lParam}, vkCode = {vkCode}");
 
-                if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+                if (wParam == (IntPtr)WM_KEYUP)
                 {
                     switch ((Keys)vkCode)
                     {
-                        case Keys.Escape:
-                            this.StopAutoTyping();
+                        case Keys.LShiftKey:
+                        case Keys.RShiftKey:
+                            _shiftPressed = false;
+                            Debug("Shift Key released");
                             break;
 
-                        case Keys.F1:
-                            _replIndex = 0;
-                            break;
-
-                        default:
-                            _intercept = false;
-                            string keys = string.Empty;
-                            switch (_text[_replIndex])
-                            {
-                                case '{':
-                                case '}':
-                                case '(':
-                                case ')':
-                                case '%':
-                                case '+':
-                                case '^':
-                                    keys = string.Format("{{{0}}}", _text[_replIndex]);
-                                    break;
-
-                                default:
-                                    keys = _text[_replIndex].ToString();
-                                    break;
-                            }
-                            Console.WriteLine(keys);
-
-                            SendKeys.Send(keys);
-                            _replIndex++;
-                            _intercept = true;
+                        case Keys.LControlKey:
+                        case Keys.RControlKey:
+                            _ctrlPressed = false;
+                            Debug("Ctrl Key released");
                             break;
                     }
                 }
-                return (IntPtr)1;
+                else if (wParam == (IntPtr)WM_KEYDOWN)
+                {
+                    switch ((Keys)vkCode)
+                    {
+                        case Keys.LShiftKey:
+                        case Keys.RShiftKey:
+                            _shiftPressed = true;
+                            Debug("Shift Key pressed");
+                            break;
+
+                        case Keys.LControlKey:
+                        case Keys.RControlKey:
+                            _ctrlPressed = true;
+                            Debug("Ctrl Key pressed");
+                            break;
+
+                        case Keys.Escape:
+                            _replaceText = false;
+                            Debug("Stop replacing text");
+                            break;
+
+                        case Keys.F1:
+                        case Keys.F2:
+                        case Keys.F3:
+                        case Keys.F4:
+                        case Keys.F5:
+                        case Keys.F6:
+                        case Keys.F7:
+                        case Keys.F8:
+                        case Keys.F9:
+                        case Keys.F10:
+                        case Keys.F11:
+                        case Keys.F12:
+                            if (_ctrlPressed && _shiftPressed)
+                            {
+                                _replaceText = true;
+                                _replIndex = vkCode - 112;
+                                _textIndex = 0;
+                                _tmpIntercept = true;
+                                Debug("Start replacing text : " + AutoTypedText[_textIndex]);
+                            }
+                            break;
+
+                        default:
+                            if (_replaceText)
+                            {                               
+                                if (_replIndex < AutoTypedText[_textIndex].Length)
+                                {
+                                    _tmpIntercept = false;
+                                    string keys = string.Empty;
+                                    switch (AutoTypedText[_textIndex][_replIndex])
+                                    {
+                                        case '{':
+                                        case '}':
+                                        case '(':
+                                        case ')':
+                                        case '%':
+                                        case '+':
+                                        case '^':
+                                            keys = string.Format("{{{0}}}", AutoTypedText[_textIndex][_replIndex]);
+                                            break;
+
+                                        default:
+                                            keys = AutoTypedText[_textIndex][_replIndex].ToString();
+                                            break;
+                                    }
+                                    Debug($"Replace capture by '{keys}'. Index = {_replIndex}");
+
+                                    SendKeys.Send(keys);
+                                    _replIndex++;
+                                    _tmpIntercept = true;
+
+                                    return (IntPtr)1;
+                                }
+                                else
+                                {
+                                    _replaceText = false;
+                                    Debug("Stop replacing text : no more input data");
+                                }
+                            }
+                            break;
+                    }
+                }              
             }
+
             return CallNextHookEx(_hookId, nCode, wParam, lParam);
+        }
+
+        [Conditional("VERBOSE_DEBUG")]
+        private void Debug(string msg)
+        {
+            System.Diagnostics.Debug.WriteLine(msg);
         }
         #endregion
 
@@ -156,5 +221,7 @@ namespace AutoTyper
         /// </summary>
         public string[] AutoTypedText { get; private set; } = new string[12];
         #endregion
+
+
     }
 }

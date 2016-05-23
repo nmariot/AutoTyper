@@ -41,9 +41,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTextToType.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtTextToType.Location = new System.Drawing.Point(16, 54);
-            this.txtTextToType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtTextToType.Margin = new System.Windows.Forms.Padding(4);
             this.txtTextToType.Multiline = true;
             this.txtTextToType.Name = "txtTextToType";
+            this.txtTextToType.ReadOnly = true;
             this.txtTextToType.Size = new System.Drawing.Size(551, 361);
             this.txtTextToType.TabIndex = 1;
             this.txtTextToType.Text = "for (int i = 0; i < 10; i++)\r\n{\r\n\tConsole.WriteLine(\"i = \" + i);\r\n}";
@@ -91,8 +92,9 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtTextToType);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Auto Typer";
             this.ResumeLayout(false);
