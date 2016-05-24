@@ -21,38 +21,87 @@ namespace AutoTyper
         #region Declarations
         private AutoTyper _typer;
         private string[] _autoTypedText;
+        private const string MSGBOX_TITLE = "AutoTyper";
         #endregion
 
         public MainForm()
         {
             InitializeComponent();
 
-            InitializeAutoTyper();
-
-            cboKey.SelectedIndex = 0;
+            InitializeAutoTyper("AutoTyper.xml");
         }
 
         static readonly List<string> FUNCTION_KEYS = new List<string> { "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12" };
 
-        private void InitializeAutoTyper()
+        private void InitializeAutoTyper(string file)
         {
-            XDocument doc = XDocument.Load("autotyper.xml");
-            _autoTypedText = new string[FUNCTION_KEYS.Count];
-            foreach (var elt in doc.Root.Elements("Key"))
+            try
             {
-                string key = elt.Attribute("value").Value;
-                int numKey = FUNCTION_KEYS.IndexOf(key);
-                if (numKey >= 0 && numKey <= 11)
+                // Dispose old autotyper first
+                if (_typer != null) _typer.Dispose();
+
+                XDocument doc = XDocument.Load(file);
+                _autoTypedText = new string[FUNCTION_KEYS.Count];
+                foreach (var eltKey in doc.Root.Elements("Key"))
                 {
-                    _autoTypedText[numKey] = (elt.FirstNode as XCData).Value.Replace("\n", "\r\n");
+                    string key = eltKey.Attribute("value").Value;
+                    int numKey = FUNCTION_KEYS.IndexOf(key);
+                    if (numKey >= 0 && numKey <= 11)
+                    {
+                        // Reading CDATA information
+                        var cdata = (from n in eltKey.Nodes() where n is XCData select n).FirstOrDefault();
+                        if (cdata != null) _autoTypedText[numKey] = (cdata as XCData).Value.Replace("\n", "\r\n");
+                    }
                 }
+                cboKey.SelectedIndex = 0;
+                _typer = new AutoTyper(_autoTypedText);
+                _typer.Started += _typer_Started;
+                _typer.Stopped += _typer_Stopped;
+                _typer.KeyStroke += _typer_KeyStroke;
             }
-            _typer = new AutoTyper(_autoTypedText);           
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error while reading config file '{file}'\r\n{ex.Message}", MSGBOX_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void _typer_KeyStroke(object sender, int e)
+        {
+            rtbTextToType.Select(0, e);
+            rtbTextToType.SelectionBackColor = Color.Yellow;
+        }
+
+        private void _typer_Stopped(object sender, EventArgs e)
+        {
+            lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";            
+        }
+
+        private void _typer_Started(object sender, int e)
+        {
+            lblInfo.Text = "AutoTyper started. Change scenario using function keys (F1-F12)";
+            cboKey.SelectedIndex = e;
+            rtbTextToType.SelectAll();
+            rtbTextToType.SelectionBackColor = rtbTextToType.BackColor;
         }
 
         private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtTextToType.Text = _autoTypedText[cboKey.SelectedIndex];
-        }        
+            rtbTextToType.Text = _autoTypedText[cboKey.SelectedIndex];
+        }
+
+        private void btnLoadScenarii_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.CheckFileExists = true;
+                dlg.CheckPathExists = true;
+                dlg.Title = "Choose file containing autotyper scenarii";
+                dlg.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*";
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    InitializeAutoTyper(dlg.FileName);
+                }
+            }
+        }
     }
 }

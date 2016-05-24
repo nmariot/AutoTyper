@@ -29,35 +29,21 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.txtTextToType = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblInfo = new System.Windows.Forms.Label();
             this.cboKey = new System.Windows.Forms.ComboBox();
+            this.btnLoadScenarii = new System.Windows.Forms.Button();
+            this.rtbTextToType = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
-            // txtTextToType
+            // lblInfo
             // 
-            this.txtTextToType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTextToType.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTextToType.Location = new System.Drawing.Point(16, 54);
-            this.txtTextToType.Margin = new System.Windows.Forms.Padding(4);
-            this.txtTextToType.Multiline = true;
-            this.txtTextToType.Name = "txtTextToType";
-            this.txtTextToType.ReadOnly = true;
-            this.txtTextToType.Size = new System.Drawing.Size(551, 361);
-            this.txtTextToType.TabIndex = 1;
-            this.txtTextToType.Text = "for (int i = 0; i < 10; i++)\r\n{\r\n\tConsole.WriteLine(\"i = \" + i);\r\n}";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(186, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(386, 17);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "To activate auto-typing, press Ctrl-Shift + Fx Key (F1 to F12)";
+            this.lblInfo.AutoSize = true;
+            this.lblInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblInfo.Location = new System.Drawing.Point(13, 9);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(471, 17);
+            this.lblInfo.TabIndex = 2;
+            this.lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";
             // 
             // cboKey
             // 
@@ -76,37 +62,62 @@
             "F10",
             "F11",
             "F12"});
-            this.cboKey.Location = new System.Drawing.Point(16, 12);
+            this.cboKey.Location = new System.Drawing.Point(16, 30);
             this.cboKey.MaxDropDownItems = 12;
             this.cboKey.Name = "cboKey";
             this.cboKey.Size = new System.Drawing.Size(164, 24);
             this.cboKey.TabIndex = 0;
             this.cboKey.SelectedIndexChanged += new System.EventHandler(this.cboKey_SelectedIndexChanged);
             // 
+            // btnLoadScenarii
+            // 
+            this.btnLoadScenarii.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadScenarii.Location = new System.Drawing.Point(326, 29);
+            this.btnLoadScenarii.Name = "btnLoadScenarii";
+            this.btnLoadScenarii.Size = new System.Drawing.Size(164, 24);
+            this.btnLoadScenarii.TabIndex = 3;
+            this.btnLoadScenarii.Text = "Load other scenarii";
+            this.btnLoadScenarii.UseVisualStyleBackColor = true;
+            this.btnLoadScenarii.Click += new System.EventHandler(this.btnLoadScenarii_Click);
+            // 
+            // rtbTextToType
+            // 
+            this.rtbTextToType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rtbTextToType.Font = new System.Drawing.Font("Consolas", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbTextToType.Location = new System.Drawing.Point(16, 60);
+            this.rtbTextToType.Name = "rtbTextToType";
+            this.rtbTextToType.ReadOnly = true;
+            this.rtbTextToType.Size = new System.Drawing.Size(474, 183);
+            this.rtbTextToType.TabIndex = 4;
+            this.rtbTextToType.Text = "";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(585, 431);
+            this.ClientSize = new System.Drawing.Size(508, 255);
+            this.Controls.Add(this.rtbTextToType);
+            this.Controls.Add(this.btnLoadScenarii);
             this.Controls.Add(this.cboKey);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtTextToType);
+            this.Controls.Add(this.lblInfo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Auto Typer";
+            this.Text = "AutoTyper";
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox txtTextToType;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblInfo;
         private System.Windows.Forms.ComboBox cboKey;
+        private System.Windows.Forms.Button btnLoadScenarii;
+        private System.Windows.Forms.RichTextBox rtbTextToType;
     }
 }
 

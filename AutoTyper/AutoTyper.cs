@@ -10,8 +10,25 @@ namespace AutoTyper
     /// Code partially inspired by http://blogs.msdn.com/b/toub/archive/2006/05/03/589423.aspx
     /// </summary>
     /// </summary>
-    class AutoTyper
+    class AutoTyper : IDisposable
     {
+        #region Evenements
+        /// <summary>
+        /// Event raised when a scenario is started (returns the scenario number. 0 for the first one)
+        /// </summary>        
+        public event EventHandler<int> Started;
+
+        /// <summary>
+        /// Event raised when a scenario is stopped (no more key or another scenario to start)
+        /// </summary>
+        public event EventHandler Stopped;
+
+        /// <summary>
+        /// Event raised when a key is typed (returns the index key number)
+        /// </summary>
+        public event EventHandler<int> KeyStroke;
+
+        #endregion
         #region Declarations
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
@@ -33,6 +50,17 @@ namespace AutoTyper
             }
             _proc = new LowLevelKeyboardProc(HookCallback);
             _hookId = SetHook(_proc);
+        }
+        #endregion
+
+        #region Public methods
+        /// <summary>
+        /// Dispose : remove the key hook
+        /// </summary>
+        public void Dispose()
+        {
+            UnhookWindowsHookEx(_hookId);
+            Stopped?.Invoke(this, EventArgs.Empty);
         }
         #endregion
 
@@ -63,6 +91,7 @@ namespace AutoTyper
         /// </summary>
         private bool _ctrlPressed = false;
         private bool _shiftPressed = false;
+        //private bool _windowsPressed = false;
 
         /// <summary>
         /// Bool value used to temporarily desactivate interception (for one keystroke to avoid endless loop)
@@ -86,7 +115,7 @@ namespace AutoTyper
             if (_tmpIntercept && nCode >= 0)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-                //Debug($"wParam = {wParam}, lParam = {lParam}, vkCode = {vkCode}");
+                // Debug($"wParam = {wParam}, lParam = {lParam}, vkCode = {vkCode}");
 
                 if (wParam == (IntPtr)WM_KEYUP)
                 {
@@ -102,6 +131,12 @@ namespace AutoTyper
                         case Keys.RControlKey:
                             _ctrlPressed = false;
                             Debug("Ctrl Key released");
+                            break;
+
+                        case Keys.LWin:
+                        case Keys.RWin:
+                            //_windowsPressed = false;
+                            Debug("Windows Key released");
                             break;
                     }
                 }
@@ -121,8 +156,15 @@ namespace AutoTyper
                             Debug("Ctrl Key pressed");
                             break;
 
+                        case Keys.LWin:
+                        case Keys.RWin:
+                            //_windowsPressed = true;
+                            Debug("Windows Key pressed");
+                            break;
+
                         case Keys.Escape:
                             _replaceText = false;
+                            Stopped?.Invoke(this, EventArgs.Empty);
                             Debug("Stop replacing text");
                             break;
 
@@ -141,9 +183,10 @@ namespace AutoTyper
                             if (_ctrlPressed && _shiftPressed)
                             {
                                 _replaceText = true;
-                                _replIndex = vkCode - 112;
-                                _textIndex = 0;
+                                _textIndex = vkCode - 112;
+                                _replIndex = 0;
                                 _tmpIntercept = true;
+                                Started?.Invoke(this, _textIndex);
                                 Debug("Start replacing text : " + AutoTypedText[_textIndex]);
                             }
                             break;
@@ -171,17 +214,20 @@ namespace AutoTyper
                                             keys = AutoTypedText[_textIndex][_replIndex].ToString();
                                             break;
                                     }
-                                    Debug($"Replace capture by '{keys}'. Index = {_replIndex}");
-
+                                    Debug($"Replace capture by '{keys}'. Index = {_replIndex}");                                    
                                     SendKeys.Send(keys);
+                                    
                                     _replIndex++;
                                     _tmpIntercept = true;
+
+                                    KeyStroke?.Invoke(this, _replIndex);
 
                                     return (IntPtr)1;
                                 }
                                 else
                                 {
                                     _replaceText = false;
+                                    Stopped?.Invoke(this, EventArgs.Empty);
                                     Debug("Stop replacing text : no more input data");
                                 }
                             }
@@ -213,6 +259,8 @@ namespace AutoTyper
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetModuleHandle(string l);
+
+       
         #endregion
 
         #region Properties

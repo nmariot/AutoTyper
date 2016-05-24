@@ -1,15 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Autotyper>
   <Key value="F1">
-    <![CDATA[for (int i = 0; i &lt; 10; i++)
-    {
-        Console.WriteLine("i = " + i);
-    }]]>
+    <![CDATA[I like the F1 key]]>
   </Key>
   <Key value="F2">
-    <![CDATA[for (int i = 0; i &lt; 100; i++)
+    <![CDATA[The F2 key is a great key for renaming items]]>
+  </Key>
+  <Key value="F3">
+    <![CDATA[F3 is useless]]>
+  </Key>
+  <Key value="F4">
+    <![CDATA[F4 means properties in Visual Studio ]]>
+  </Key>
+  <Key value="F5">
+    <![CDATA[If you want a refresh just call F5]]>
+  </Key>
+  <Key value="F6">
+    <![CDATA[//Some C# code for F6
+    for (int i = 0;i < 10;i++)
     {
-      Console.WriteLine("isdfsdfsd = " + i);
+      Debug.WriteLine(i);
     }]]>
+  </Key>
+  <Key value="F7">
+    <![CDATA[''Some VB.Net code for F7
+   For value As Integer = 0 To 10
+	    Debug.WriteLine(value)
+	 Next]]>
+  </Key>
+  <Key value="F8">
+    <![CDATA[//Some Javascript code for F8
+    var text;
+    for (i = 0; i < 10; i++) { 
+      text += i + ",";
+    }]]>
+  </Key>
+  <Key value="F9">
+    <!-- Excel formula -->
+      <![CDATA[=D15+B15+(E9-$D$11) / F14 * 23]]>
+  </Key>
+  <Key value="F10">
+    <!-- complex Url -->
+    <![CDATA[https://www.google.fr/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=long%20url]]>
+  </Key>
+  <Key value="F11">    
+    <![CDATA['Excel VBA Code
+    Sub MacroTest()
+    Dim i As Integer
+    For i = 1 To 10
+        Debug.Print i
+    Next i
+End Sub
+]]>
+  </Key>
+  <Key value="F12">
+    <![CDATA[Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.
+Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.
+]]>
   </Key>
 </Autotyper>
