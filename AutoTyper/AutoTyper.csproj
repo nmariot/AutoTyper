@@ -60,6 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -88,6 +89,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Icons\F1.ico" />
+    <Content Include="Icons\F10.ico" />
+    <Content Include="Icons\F12.ico" />
+    <Content Include="Icons\F11.ico" />
+    <Content Include="Icons\F2.ico" />
+    <Content Include="Icons\F4.ico" />
+    <Content Include="Icons\F8.ico" />
+    <Content Include="Icons\F9.ico" />
+    <Content Include="Icons\F7.ico" />
+    <Content Include="Icons\F6.ico" />
+    <Content Include="Icons\F5.ico" />
+    <Content Include="Icons\F3.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

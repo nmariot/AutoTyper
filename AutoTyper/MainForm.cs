@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Xml.Linq;
+using System.Resources;
+using AutoTyper.Properties;
 
 namespace AutoTyper
 {
@@ -80,6 +82,7 @@ namespace AutoTyper
         {
             lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";
             niTaskBar.Text = $"AutoTyper - Stopped";
+            niTaskBar.Icon = Resources.AutoTyper;
         }
 
         private void _typer_Started(object sender, int e)
@@ -89,7 +92,47 @@ namespace AutoTyper
             rtbTextToType.SelectAll();
             rtbTextToType.SelectionBackColor = rtbTextToType.BackColor;
             string firstChars = rtbTextToType.Text.Length > 20 ? rtbTextToType.Text.Substring(0, 20) + "..." : rtbTextToType.Text;
-            niTaskBar.Text = $"AutoTyper - Started using F{(e + 1).ToString()}\n{firstChars}";            
+            niTaskBar.Text = $"AutoTyper - Started using F{(e + 1).ToString()}\n{firstChars}";
+            switch (e)
+            {
+                case 0:
+                    niTaskBar.Icon = Resources.F1;
+                    break;
+                case 1:
+                    niTaskBar.Icon = Resources.F2;
+                    break;
+                case 2:
+                    niTaskBar.Icon = Resources.F3;
+                    break;
+                case 3:
+                    niTaskBar.Icon = Resources.F4;
+                    break;
+                case 4:
+                    niTaskBar.Icon = Resources.F5;
+                    break;
+                case 5:
+                    niTaskBar.Icon = Resources.F6;
+                    break;
+                case 6:
+                    niTaskBar.Icon = Resources.F7;
+                    break;
+                case 7:
+                    niTaskBar.Icon = Resources.F8;
+                    break;
+                case 8:
+                    niTaskBar.Icon = Resources.F9;
+                    break;
+                case 9:
+                    niTaskBar.Icon = Resources.F10;
+                    break;
+                case 10:
+                    niTaskBar.Icon = Resources.F11;
+                    break;
+                case 11:
+                    niTaskBar.Icon = Resources.F12;
+                    break;
+            }
+            
         }
 
         private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
