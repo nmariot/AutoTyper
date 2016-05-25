@@ -28,11 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.lblInfo = new System.Windows.Forms.Label();
             this.cboKey = new System.Windows.Forms.ComboBox();
             this.btnLoadScenarii = new System.Windows.Forms.Button();
             this.rtbTextToType = new System.Windows.Forms.RichTextBox();
+            this.niTaskBar = new System.Windows.Forms.NotifyIcon(this.components);
+            this.mnuNotifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuQuit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuNotifyIcon.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblInfo
@@ -76,7 +81,7 @@
             this.btnLoadScenarii.Name = "btnLoadScenarii";
             this.btnLoadScenarii.Size = new System.Drawing.Size(164, 24);
             this.btnLoadScenarii.TabIndex = 3;
-            this.btnLoadScenarii.Text = "Load other scenarii";
+            this.btnLoadScenarii.Text = "Load scenario";
             this.btnLoadScenarii.UseVisualStyleBackColor = true;
             this.btnLoadScenarii.Click += new System.EventHandler(this.btnLoadScenarii_Click);
             // 
@@ -93,6 +98,29 @@
             this.rtbTextToType.TabIndex = 4;
             this.rtbTextToType.Text = "";
             // 
+            // niTaskBar
+            // 
+            this.niTaskBar.ContextMenuStrip = this.mnuNotifyIcon;
+            this.niTaskBar.Icon = ((System.Drawing.Icon)(resources.GetObject("niTaskBar.Icon")));
+            this.niTaskBar.Text = "AutoTyper - Stopped";
+            this.niTaskBar.Visible = true;
+            this.niTaskBar.DoubleClick += new System.EventHandler(this.niTaskBar_DoubleClick);
+            // 
+            // mnuNotifyIcon
+            // 
+            this.mnuNotifyIcon.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.mnuNotifyIcon.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuQuit});
+            this.mnuNotifyIcon.Name = "mnuNotifyIcon";
+            this.mnuNotifyIcon.Size = new System.Drawing.Size(113, 30);
+            // 
+            // mnuQuit
+            // 
+            this.mnuQuit.Name = "mnuQuit";
+            this.mnuQuit.Size = new System.Drawing.Size(112, 26);
+            this.mnuQuit.Text = "Quit";
+            this.mnuQuit.Click += new System.EventHandler(this.mnuQuit_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -105,9 +133,11 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AutoTyper";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
+            this.mnuNotifyIcon.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -118,6 +148,9 @@
         private System.Windows.Forms.ComboBox cboKey;
         private System.Windows.Forms.Button btnLoadScenarii;
         private System.Windows.Forms.RichTextBox rtbTextToType;
+        private System.Windows.Forms.NotifyIcon niTaskBar;
+        private System.Windows.Forms.ContextMenuStrip mnuNotifyIcon;
+        private System.Windows.Forms.ToolStripMenuItem mnuQuit;
     }
 }
 

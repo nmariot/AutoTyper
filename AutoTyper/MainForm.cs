@@ -22,18 +22,19 @@ namespace AutoTyper
         private AutoTyper _typer;
         private string[] _autoTypedText;
         private const string MSGBOX_TITLE = "AutoTyper";
+        private string _scenario;
         #endregion
 
-        public MainForm()
+        public MainForm(string scenario)
         {
             InitializeComponent();
 
-            InitializeAutoTyper("AutoTyper.xml");
+            _scenario = scenario;            
         }
 
         static readonly List<string> FUNCTION_KEYS = new List<string> { "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12" };
 
-        private void InitializeAutoTyper(string file)
+        private bool InitializeAutoTyper(string file)
         {
             try
             {
@@ -58,11 +59,15 @@ namespace AutoTyper
                 _typer.Started += _typer_Started;
                 _typer.Stopped += _typer_Stopped;
                 _typer.KeyStroke += _typer_KeyStroke;
+
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error while reading config file '{file}'\r\n{ex.Message}", MSGBOX_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
+            
         }
 
         private void _typer_KeyStroke(object sender, int e)
@@ -73,7 +78,8 @@ namespace AutoTyper
 
         private void _typer_Stopped(object sender, EventArgs e)
         {
-            lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";            
+            lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";
+            niTaskBar.Text = $"AutoTyper - Stopped";
         }
 
         private void _typer_Started(object sender, int e)
@@ -82,6 +88,8 @@ namespace AutoTyper
             cboKey.SelectedIndex = e;
             rtbTextToType.SelectAll();
             rtbTextToType.SelectionBackColor = rtbTextToType.BackColor;
+            string firstChars = rtbTextToType.Text.Length > 20 ? rtbTextToType.Text.Substring(0, 20) + "..." : rtbTextToType.Text;
+            niTaskBar.Text = $"AutoTyper - Started using F{(e + 1).ToString()}\n{firstChars}";            
         }
 
         private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
@@ -102,6 +110,38 @@ namespace AutoTyper
                     InitializeAutoTyper(dlg.FileName);
                 }
             }
+        }
+
+        private void niTaskBar_DoubleClick(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+            this.Show();
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            switch (this.WindowState)
+            {
+                case FormWindowState.Minimized:
+                    this.ShowInTaskbar = false;
+                    this.Hide();
+                    break;
+                case FormWindowState.Normal:
+                    this.ShowInTaskbar = true;
+                    break;
+            }
+        }
+
+        private void mnuQuit_Click(object sender, EventArgs e)
+        {
+            _typer.Dispose();
+            Application.Exit();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            if (!InitializeAutoTyper(_scenario)) this.Close();
         }
     }
 }
