@@ -61,6 +61,7 @@ namespace AutoTyper
                 _typer.Started += _typer_Started;
                 _typer.Stopped += _typer_Stopped;
                 _typer.KeyStroke += _typer_KeyStroke;
+                RemoveSelectionColor();
 
                 return true;
             }
@@ -83,12 +84,14 @@ namespace AutoTyper
             lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";
             niTaskBar.Text = $"AutoTyper - Stopped";
             niTaskBar.Icon = Resources.AutoTyper;
+            cboKey.Enabled = true;
         }
 
         private void _typer_Started(object sender, int e)
         {
             lblInfo.Text = "AutoTyper started. Change scenario using function keys (F1-F12)";
             cboKey.SelectedIndex = e;
+            cboKey.Enabled = false;
             rtbTextToType.SelectAll();
             rtbTextToType.SelectionBackColor = rtbTextToType.BackColor;
             string firstChars = rtbTextToType.Text.Length > 20 ? rtbTextToType.Text.Substring(0, 20) + "..." : rtbTextToType.Text;
@@ -137,7 +140,14 @@ namespace AutoTyper
 
         private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
         {
+            RemoveSelectionColor();
             rtbTextToType.Text = _autoTypedText[cboKey.SelectedIndex];
+        }
+
+        private void RemoveSelectionColor()
+        {
+            rtbTextToType.SelectAll();
+            rtbTextToType.SelectionBackColor = rtbTextToType.BackColor;
         }
 
         private void btnLoadScenarii_Click(object sender, EventArgs e)
@@ -164,11 +174,11 @@ namespace AutoTyper
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
+            Debug.WriteLine("MainForm_Resize : FormWindowState = " + this.WindowState);
             switch (this.WindowState)
             {
                 case FormWindowState.Minimized:
-                    this.ShowInTaskbar = false;
-                    this.Hide();
+                    this.ShowInTaskbar = false;                    
                     break;
                 case FormWindowState.Normal:
                     this.ShowInTaskbar = true;
@@ -185,6 +195,11 @@ namespace AutoTyper
         private void MainForm_Load(object sender, EventArgs e)
         {
             if (!InitializeAutoTyper(_scenario)) this.Close();
+        }
+
+        private void mnuOpenWindow_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
         }
     }
 }

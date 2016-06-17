@@ -207,6 +207,7 @@ namespace AutoTyper
                                         case '%':
                                         case '+':
                                         case '^':
+                                        case '~':
                                             keys = string.Format("{{{0}}}", AutoTypedText[_textIndex][_replIndex]);
                                             break;
 
