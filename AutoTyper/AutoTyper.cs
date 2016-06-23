@@ -28,13 +28,19 @@ namespace AutoTyper
         /// </summary>
         public event EventHandler<int> KeyStroke;
 
+        /// <summary>
+        /// Event raised when the number of letters typed has changed
+        /// </summary>
+        public event EventHandler<int> NbOfLettersTypedChanged;
         #endregion
+
         #region Declarations
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
         private const int WM_KEYUP = 0x0101;
         private LowLevelKeyboardProc _proc;
         private IntPtr _hookId = IntPtr.Zero;
+        private int _nbOfLettersTyped = 1;
         #endregion
 
         #region Public constructor and methods
@@ -192,49 +198,68 @@ namespace AutoTyper
                             break;
 
                         default:
-                            if (_replaceText)
-                            {                               
-                                if (_replIndex < AutoTypedText[_textIndex].Length)
+                            if (_ctrlPressed && _shiftPressed && (Keys)vkCode == Keys.Up)
+                            {
+                                // Ctrl-Shift-Up increases the number of letters typeds
+                                this.NbOfLettersTyped++;
+                            }
+                            else if (_ctrlPressed && _shiftPressed && (Keys)vkCode == Keys.Down)
+                            {
+                                // Ctrl-Shift-Down decreases the number
+                                this.NbOfLettersTyped--;
+                            }
+                            else if (_replaceText)
+                            {
+                                bool lettersTyped = false;
+                                for (int i = 0; i < this.NbOfLettersTyped; i++)
                                 {
-                                    _tmpIntercept = false;
-                                    string keys = string.Empty;
-                                    switch (AutoTypedText[_textIndex][_replIndex])
+                                    if (_replIndex < AutoTypedText[_textIndex].Length)
                                     {
-                                        case '{':
-                                        case '}':
-                                        case '(':
-                                        case ')':
-                                        case '%':
-                                        case '+':
-                                        case '^':
-                                        case '~':
-                                            keys = string.Format("{{{0}}}", AutoTypedText[_textIndex][_replIndex]);
-                                            break;
+                                        lettersTyped = true;
+                                        _tmpIntercept = false;
+                                        string keys = string.Empty;
+                                        switch (AutoTypedText[_textIndex][_replIndex])
+                                        {
+                                            case '{':
+                                            case '}':
+                                            case '(':
+                                            case ')':
+                                            case '%':
+                                            case '+':
+                                            case '^':
+                                            case '~':
+                                                keys = string.Format("{{{0}}}", AutoTypedText[_textIndex][_replIndex]);
+                                                break;
 
-                                        default:
-                                            keys = AutoTypedText[_textIndex][_replIndex].ToString();
-                                            break;
+                                            default:
+                                                keys = AutoTypedText[_textIndex][_replIndex].ToString();
+                                                break;
+                                        }
+                                        Debug($"Replace capture by '{keys}'. Index = {_replIndex}");
+                                        SendKeys.Send(keys);
+
+                                        _replIndex++;
+                                        _tmpIntercept = true;
+
+                                        KeyStroke?.Invoke(this, _replIndex);
                                     }
-                                    Debug($"Replace capture by '{keys}'. Index = {_replIndex}");                                    
-                                    SendKeys.Send(keys);
-                                    
-                                    _replIndex++;
-                                    _tmpIntercept = true;
-
-                                    KeyStroke?.Invoke(this, _replIndex);
-
-                                    return (IntPtr)1;
+                                    else
+                                    {
+                                        _replaceText = false;
+                                        Stopped?.Invoke(this, EventArgs.Empty);
+                                        Debug("Stop replacing text : no more input data");
+                                    }   
                                 }
-                                else
+                                if (lettersTyped)
                                 {
-                                    _replaceText = false;
-                                    Stopped?.Invoke(this, EventArgs.Empty);
-                                    Debug("Stop replacing text : no more input data");
+                                    // Cancel current keystroke
+                                    Debug("Return (IntPtr)1");
+                                    return (IntPtr)1;
                                 }
                             }
                             break;
                     }
-                }              
+                }
             }
 
             return CallNextHookEx(_hookId, nCode, wParam, lParam);
@@ -261,7 +286,7 @@ namespace AutoTyper
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetModuleHandle(string l);
 
-       
+
         #endregion
 
         #region Properties
@@ -269,6 +294,26 @@ namespace AutoTyper
         /// List the text to be typed for each function key (F1 => AutoTypedText[0] ...)
         /// </summary>
         public string[] AutoTypedText { get; private set; } = new string[12];
+
+        /// <summary>
+        /// Number of letters typed when striking one key
+        /// </summary>
+        public int NbOfLettersTyped
+        {
+            get
+            {
+                return _nbOfLettersTyped;
+            }
+            set
+            {
+                if (_nbOfLettersTyped != value) 
+                {
+                    _nbOfLettersTyped = Math.Min(Math.Max(1, value), 10);// When greater or equal than 11, does not cancel the key stroke
+                    NbOfLettersTypedChanged?.Invoke(this, _nbOfLettersTyped);
+                    Debug("Number of letters typed : " + _nbOfLettersTyped);
+                }
+            }
+        }
         #endregion
 
 

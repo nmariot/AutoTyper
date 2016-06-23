@@ -36,10 +36,13 @@
             this.rtbTextToType = new System.Windows.Forms.RichTextBox();
             this.niTaskBar = new System.Windows.Forms.NotifyIcon(this.components);
             this.mnuNotifyIcon = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnuQuit = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuLoadScenarii = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuOpenWindow = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuLoadScenarii = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuQuit = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtNbLettersTyped = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.mnuNotifyIcon.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtNbLettersTyped)).BeginInit();
             this.SuspendLayout();
             // 
             // lblInfo
@@ -79,10 +82,10 @@
             // btnLoadScenarii
             // 
             this.btnLoadScenarii.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoadScenarii.Location = new System.Drawing.Point(384, 29);
+            this.btnLoadScenarii.Location = new System.Drawing.Point(398, 29);
             this.btnLoadScenarii.Name = "btnLoadScenarii";
             this.btnLoadScenarii.Size = new System.Drawing.Size(164, 24);
-            this.btnLoadScenarii.TabIndex = 3;
+            this.btnLoadScenarii.TabIndex = 2;
             this.btnLoadScenarii.Text = "Load scenarii";
             this.btnLoadScenarii.UseVisualStyleBackColor = true;
             this.btnLoadScenarii.Click += new System.EventHandler(this.btnLoadScenarii_Click);
@@ -96,8 +99,8 @@
             this.rtbTextToType.Location = new System.Drawing.Point(16, 60);
             this.rtbTextToType.Name = "rtbTextToType";
             this.rtbTextToType.ReadOnly = true;
-            this.rtbTextToType.Size = new System.Drawing.Size(532, 183);
-            this.rtbTextToType.TabIndex = 4;
+            this.rtbTextToType.Size = new System.Drawing.Size(546, 212);
+            this.rtbTextToType.TabIndex = 3;
             this.rtbTextToType.Text = "";
             // 
             // niTaskBar
@@ -116,34 +119,70 @@
             this.mnuLoadScenarii,
             this.mnuQuit});
             this.mnuNotifyIcon.Name = "mnuNotifyIcon";
-            this.mnuNotifyIcon.Size = new System.Drawing.Size(182, 110);
-            // 
-            // mnuQuit
-            // 
-            this.mnuQuit.Name = "mnuQuit";
-            this.mnuQuit.Size = new System.Drawing.Size(181, 26);
-            this.mnuQuit.Text = "Quit";
-            this.mnuQuit.Click += new System.EventHandler(this.mnuQuit_Click);
-            // 
-            // mnuLoadScenarii
-            // 
-            this.mnuLoadScenarii.Name = "mnuLoadScenarii";
-            this.mnuLoadScenarii.Size = new System.Drawing.Size(181, 26);
-            this.mnuLoadScenarii.Text = "Load scenarii";
-            this.mnuLoadScenarii.Click += new System.EventHandler(this.btnLoadScenarii_Click);
+            this.mnuNotifyIcon.Size = new System.Drawing.Size(177, 82);
             // 
             // mnuOpenWindow
             // 
             this.mnuOpenWindow.Name = "mnuOpenWindow";
-            this.mnuOpenWindow.Size = new System.Drawing.Size(181, 26);
+            this.mnuOpenWindow.Size = new System.Drawing.Size(176, 26);
             this.mnuOpenWindow.Text = "Open window";
             this.mnuOpenWindow.Click += new System.EventHandler(this.mnuOpenWindow_Click);
+            // 
+            // mnuLoadScenarii
+            // 
+            this.mnuLoadScenarii.Name = "mnuLoadScenarii";
+            this.mnuLoadScenarii.Size = new System.Drawing.Size(176, 26);
+            this.mnuLoadScenarii.Text = "Load scenarii";
+            this.mnuLoadScenarii.Click += new System.EventHandler(this.btnLoadScenarii_Click);
+            // 
+            // mnuQuit
+            // 
+            this.mnuQuit.Name = "mnuQuit";
+            this.mnuQuit.Size = new System.Drawing.Size(176, 26);
+            this.mnuQuit.Text = "Quit";
+            this.mnuQuit.Click += new System.EventHandler(this.mnuQuit_Click);
+            // 
+            // txtNbLettersTyped
+            // 
+            this.txtNbLettersTyped.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNbLettersTyped.Location = new System.Drawing.Point(315, 29);
+            this.txtNbLettersTyped.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.txtNbLettersTyped.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtNbLettersTyped.Name = "txtNbLettersTyped";
+            this.txtNbLettersTyped.Size = new System.Drawing.Size(77, 22);
+            this.txtNbLettersTyped.TabIndex = 1;
+            this.txtNbLettersTyped.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtNbLettersTyped.ValueChanged += new System.EventHandler(this.txtNbLettersTyped_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(216, 31);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(93, 17);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Nb of letters :";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(566, 255);
+            this.ClientSize = new System.Drawing.Size(580, 284);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtNbLettersTyped);
             this.Controls.Add(this.rtbTextToType);
             this.Controls.Add(this.btnLoadScenarii);
             this.Controls.Add(this.cboKey);
@@ -158,6 +197,7 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.mnuNotifyIcon.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtNbLettersTyped)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -173,6 +213,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuQuit;
         private System.Windows.Forms.ToolStripMenuItem mnuLoadScenarii;
         private System.Windows.Forms.ToolStripMenuItem mnuOpenWindow;
+        private System.Windows.Forms.NumericUpDown txtNbLettersTyped;
+        private System.Windows.Forms.Label label1;
     }
 }
 

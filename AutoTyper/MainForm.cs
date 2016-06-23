@@ -31,7 +31,7 @@ namespace AutoTyper
         {
             InitializeComponent();
 
-            _scenario = scenario;            
+            _scenario = scenario;
         }
 
         static readonly List<string> FUNCTION_KEYS = new List<string> { "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12" };
@@ -61,6 +61,7 @@ namespace AutoTyper
                 _typer.Started += _typer_Started;
                 _typer.Stopped += _typer_Stopped;
                 _typer.KeyStroke += _typer_KeyStroke;
+                _typer.NbOfLettersTypedChanged += _typer_NbOfLettersTypedChanged;
                 RemoveSelectionColor();
 
                 return true;
@@ -70,7 +71,12 @@ namespace AutoTyper
                 MessageBox.Show($"Error while reading config file '{file}'\r\n{ex.Message}", MSGBOX_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
-            
+
+        }
+
+        private void _typer_NbOfLettersTypedChanged(object sender, int e)
+        {
+            txtNbLettersTyped.Value = e;
         }
 
         private void _typer_KeyStroke(object sender, int e)
@@ -135,7 +141,7 @@ namespace AutoTyper
                     niTaskBar.Icon = Resources.F12;
                     break;
             }
-            
+
         }
 
         private void cboKey_SelectedIndexChanged(object sender, EventArgs e)
@@ -178,7 +184,7 @@ namespace AutoTyper
             switch (this.WindowState)
             {
                 case FormWindowState.Minimized:
-                    this.ShowInTaskbar = false;                    
+                    this.ShowInTaskbar = false;
                     break;
                 case FormWindowState.Normal:
                     this.ShowInTaskbar = true;
@@ -200,6 +206,11 @@ namespace AutoTyper
         private void mnuOpenWindow_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
+        }
+
+        private void txtNbLettersTyped_ValueChanged(object sender, EventArgs e)
+        {
+            _typer.NbOfLettersTyped = (int)txtNbLettersTyped.Value;
         }
     }
 }
