@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Xml.Linq;
 using System.Resources;
 using AutoTyper.Properties;
+using System.Reflection;
 
 namespace AutoTyper
 {
@@ -31,6 +32,7 @@ namespace AutoTyper
         {
             InitializeComponent();
 
+            this.Text = $"AutoTyper (V{Assembly.GetExecutingAssembly().GetName().Version})";
             _scenario = scenario;
         }
 
@@ -40,6 +42,8 @@ namespace AutoTyper
         {
             try
             {
+                _typer_Stopped(null, null);
+
                 // Dispose old autotyper first
                 if (_typer != null) _typer.Dispose();
 
@@ -87,7 +91,7 @@ namespace AutoTyper
 
         private void _typer_Stopped(object sender, EventArgs e)
         {
-            lblInfo.Text = "AutoTyper stopped. Start scenario using function keys (F1-F12)";
+            lblInfo.Text = "AutoTyper stopped.Start scenario using Ctrl + Shift + function key(F1 - F12)";
             niTaskBar.Text = $"AutoTyper - Stopped";
             niTaskBar.Icon = Resources.AutoTyper;
             cboKey.Enabled = true;
@@ -95,7 +99,7 @@ namespace AutoTyper
 
         private void _typer_Started(object sender, int e)
         {
-            lblInfo.Text = "AutoTyper started. Change scenario using function keys (F1-F12)";
+            lblInfo.Text = "AutoTyper started. Change scenario using Ctrl + Shift + function key(F1 - F12)";            
             cboKey.SelectedIndex = e;
             cboKey.Enabled = false;
             rtbTextToType.SelectAll();
