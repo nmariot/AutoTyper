@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
@@ -74,14 +73,14 @@ namespace AutoTyper
 
         }
 
-        private void _typer_NbOfLettersTypedChanged(object sender, int e)
+        private void _typer_NbOfLettersTypedChanged(object sender, IntEventArgs e)
         {
-            txtNbLettersTyped.Value = e;
+            txtNbLettersTyped.Value = e.Value;
         }
 
-        private void _typer_KeyStroke(object sender, int e)
+        private void _typer_KeyStroke(object sender, IntEventArgs e)
         {
-            rtbTextToType.Select(0, e);
+            rtbTextToType.Select(0, e.Value);
             rtbTextToType.SelectionBackColor = Color.Yellow;
         }
 
@@ -93,16 +92,16 @@ namespace AutoTyper
             cboKey.Enabled = true;
         }
 
-        private void _typer_Started(object sender, int e)
+        private void _typer_Started(object sender, IntEventArgs e)
         {
             lblInfo.Text = "AutoTyper started. Change scenario using function keys (F1-F12)";
-            cboKey.SelectedIndex = e;
+            cboKey.SelectedIndex = e.Value;
             cboKey.Enabled = false;
             rtbTextToType.SelectAll();
             rtbTextToType.SelectionBackColor = rtbTextToType.BackColor;
             string firstChars = rtbTextToType.Text.Length > 20 ? rtbTextToType.Text.Substring(0, 20) + "..." : rtbTextToType.Text;
-            niTaskBar.Text = $"AutoTyper - Started using F{(e + 1).ToString()}\n{firstChars}";
-            switch (e)
+            niTaskBar.Text = $"AutoTyper - Started using F{(e.Value + 1).ToString()}\n{firstChars}";
+            switch (e.Value)
             {
                 case 0:
                     niTaskBar.Icon = Resources.F1;

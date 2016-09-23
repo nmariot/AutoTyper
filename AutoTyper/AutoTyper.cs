@@ -16,7 +16,7 @@ namespace AutoTyper
         /// <summary>
         /// Event raised when a scenario is started (returns the scenario number. 0 for the first one)
         /// </summary>        
-        public event EventHandler<int> Started;
+        public event EventHandler<IntEventArgs> Started;
 
         /// <summary>
         /// Event raised when a scenario is stopped (no more key or another scenario to start)
@@ -26,12 +26,12 @@ namespace AutoTyper
         /// <summary>
         /// Event raised when a key is typed (returns the index key number)
         /// </summary>
-        public event EventHandler<int> KeyStroke;
+        public event EventHandler<IntEventArgs> KeyStroke;
 
         /// <summary>
         /// Event raised when the number of letters typed has changed
         /// </summary>
-        public event EventHandler<int> NbOfLettersTypedChanged;
+        public event EventHandler<IntEventArgs> NbOfLettersTypedChanged;
         #endregion
 
         #region Declarations
@@ -192,7 +192,7 @@ namespace AutoTyper
                                 _textIndex = vkCode - 112;
                                 _replIndex = 0;
                                 _tmpIntercept = true;
-                                Started?.Invoke(this, _textIndex);
+                                Started?.Invoke(this, new IntEventArgs(_textIndex));
                                 Debug("Start replacing text : " + AutoTypedText[_textIndex]);
                             }
                             break;
@@ -241,7 +241,7 @@ namespace AutoTyper
                                         _replIndex++;
                                         _tmpIntercept = true;
 
-                                        KeyStroke?.Invoke(this, _replIndex);
+                                        KeyStroke?.Invoke(this, new IntEventArgs(_replIndex));
                                     }
                                     else
                                     {
@@ -309,7 +309,7 @@ namespace AutoTyper
                 if (_nbOfLettersTyped != value) 
                 {
                     _nbOfLettersTyped = Math.Min(Math.Max(1, value), 10);// When greater or equal than 11, does not cancel the key stroke
-                    NbOfLettersTypedChanged?.Invoke(this, _nbOfLettersTyped);
+                    NbOfLettersTypedChanged?.Invoke(this, new IntEventArgs(_nbOfLettersTyped));
                     Debug("Number of letters typed : " + _nbOfLettersTyped);
                 }
             }
